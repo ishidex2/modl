@@ -1,0 +1,2 @@
+Allow call assignments
+Allow dynamic identifiers in initializers of tables

@@ -1,0 +1,25 @@
+// Expression-Based
+
+x = 0; stdout("HI"); stdout(while x < 10: x = x + 1);
+
+// OOP
+
+Fruit = [fruit: ""];
+
+func Fruit::new(name) {
+    f = Prototype.set([], Fruit);
+    f.fruit = name;
+    f
+};
+
+func Fruit::eat(self)
+{
+    stdout("Ate fruit "+self.fruit);
+};
+
+apple = Fruit.new("apple");
+apple::eat();
+
+// Some stuff
+
+stdout(if apple.fruit == "apple": "This is apple" else: "This is not apple")

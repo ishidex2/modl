@@ -1,0 +1,14 @@
+{
+  "name": "modljs",
+  "version": "1.0.0",
+  "description": "none",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "lang"
+  ],
+  "author": "ishidex2",
+  "license": "ISC"
+}
