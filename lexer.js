@@ -1,5 +1,6 @@
 var LexerRuleset = require('./lexerRuleset');
 var Token = require('./token');
+let debug = require("./debug");
 
 module.exports = class Lexer
 {
@@ -46,6 +47,8 @@ module.exports = class Lexer
 
   lex(ruleset, source)
   {
+    debug.begin('lex');
+
     var pos = 0;
     var result = [];
     var self = this;
@@ -114,6 +117,8 @@ module.exports = class Lexer
         process.exit(-1);
       }
     }
+
+    debug.end('lex');
     return result;
   }
 }

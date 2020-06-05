@@ -14,6 +14,7 @@ const ops = {
 }
 
 let node = require("./node")
+let debug = require("./debug")
 
 class Decomposer
 {
@@ -21,6 +22,8 @@ class Decomposer
 
     decompose(prog)
     {
+        debug.begin('decompose')
+
         this.res = []
         this.idMode = "GET"
         this.invalidateCall = false
@@ -29,6 +32,8 @@ class Decomposer
         this.isCall = false
         this.callCntArr = null
         this._decompose(prog)
+
+        debug.end('decompose')
         return this.res
     }
 

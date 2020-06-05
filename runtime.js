@@ -12,7 +12,8 @@
 // '*': 'MUL',
 // '/': 'DIV'
 
-let node = require("./node")
+let node = require("./node");
+let debug = require("./debug");
 
 class Env
 {
@@ -69,6 +70,8 @@ class Runtime
 
     run(prog)
     {
+        debug.begin('run');
+
         this.prog = prog
         this.env = this.rootEnv;
         this.stack = []
@@ -162,6 +165,7 @@ class Runtime
                     break;
 
                 case "TBLGET":
+                    debug.event('tblget', 'type: ' + this.stack[this.stack.length - 1]['type']);
                     this.push(this.pop().tget(this.pop()))
                     break;
 
@@ -247,6 +251,7 @@ class Runtime
         if (this.stack.length > 1)
             console.warn("STACK IS NOT CLEAR!!", this.stack)
 
+        debug.end('run')
         return this.pop()
     }
 
