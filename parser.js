@@ -1,3 +1,6 @@
+let debug = require("./debug");
+
+
 class Parser
 {
     yield(type = null)
@@ -62,6 +65,8 @@ class Parser
 
     parse(tokens)
     {
+        debug.begin('parse');
+
         this.callCnt = 0;
         this.tokens = tokens
         this.idx = 0
@@ -70,6 +75,8 @@ class Parser
 
         let p = this.parseProg();
         // console.log(this.callCnt);
+
+        debug.end('parse');
         return p;
     }
 

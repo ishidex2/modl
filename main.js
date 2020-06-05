@@ -1,3 +1,6 @@
+var debug = require("./debug")
+debug.begin('program')
+
 var Lexer = require('./lexer');
 var LexerRuleset = require('./lexerRuleset');
 var fs = require('fs');
@@ -6,6 +9,7 @@ var Decomposer = require("./decomposer.js");
 var Runtime = require("./runtime.js").Runtime
 var Env = require("./runtime.js").Env
 var node = require("./node")
+var fs = require('fs');
 
 var lexer = new Lexer();
 var ruleset = new LexerRuleset();
@@ -57,16 +61,16 @@ ruleset.add(/[a-zA-Z_]+/g, "IDENTIFIER");
 
 var tokens = lexer.lex(ruleset, fs.readFileSync("./test.modl").toString());
 
-// console.log("\033[0;34m++++++ LEXER RESULT ++++++\033[0;32m");
+// console.log("\033[0;34m++++++ LEXER RESULT ++++++\u001b[0m");
 // console.log(tokens);
 
-// console.log("\033[0;34m++++++ PARSER RESULT ++++++\033[0;32m");
+// console.log("\033[0;34m++++++ PARSER RESULT ++++++\u001b[0m");
 let t = parser.parse(tokens)
 // console.log(JSON.stringify(t));
-// console.log("\033[0;34m++++++ DECOMPOSER RESULT ++++++\033[0;32m");
+// console.log("\033[0;34m++++++ DECOMPOSER RESULT ++++++\u001b[0m");
 let code = decomposer.decompose(t);
-console.log(Decomposer.fancy(code));
-// console.log("\033[0;34m++++++ RUN RESULT ++++++\033[0;32m");
+fs.writeFile('_debug_decomposer_output.txt', Decomposer.fancy(code), 'utf8', (...a) => { });
+console.log("\033[0;34m++++++ RUN RESULT ++++++\u001b[0m");
 
 
 runtime.rootEnv = new Env()
@@ -101,4 +105,15 @@ runtime.rootEnv.setFunction("rand", (runtime, env) => {
 })
 
 Runtime.dump(runtime.run(code))
+console.log("\033[0;34m++++++ END OF RUN ++++++\u001b[0m");
 
+
+
+
+debug.end('program')
+console.log('\u001b[0;34m\n\n-----=====     STATS     =====-----\u001b[0m')
+console.log('Tokens count:', tokens.length);
+console.log('VM code size:', code.length);
+console.log('Debug timers:');
+debug.dumpTimers();
+// console.log(JSON.stringify(debug.timers[0], null, '  '));

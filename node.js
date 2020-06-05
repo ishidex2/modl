@@ -1,3 +1,5 @@
+let debug = require('./debug')
+
 const NodeType = {
     INV: -1,
     NUM: 0,
@@ -18,18 +20,25 @@ class Node
 
     call(runtime, env)
     {
+        // debug.begin('node.call')
         if (this.type !== NodeType.FUN)
         {
+            debug.end('node.call')
             throw new Error("Attempt to call on non-function "+this.type)   
         }
+
+        let ret
         if (this.meta.native)
         {
-            return this.value(runtime, env)
+            ret = this.value(runtime, env)
         }
         else
         {
-            return runtime.call(this.value)
+            ret = runtime.call(this.value)
         }
+
+        // debug.end('node.call')
+        return ret
     }
     
     push(v)
@@ -175,7 +184,7 @@ class Node
         }
         if (p.type == NodeType.STR)
         {
-            if (!rootDepth)
+            if (!rootDepth || true)
             {
                 return "\""+p.value+"\"";
             }
