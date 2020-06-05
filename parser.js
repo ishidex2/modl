@@ -3,15 +3,20 @@ let debug = require("./debug");
 
 class Parser
 {
+    error(msg)
+    {
+        this.tokens[this.idx].error(msg);
+    }
+
     yield(type = null)
     {
         if (this.idx + 1 > this.tokens.length)
         {
-            throw new Error(`Unexpected EOF`)
+            this.error(`Unexpected EOF`)
         }
         if (type && this.tokens[this.idx].type !== type)
         {
-            throw new Error(`Unexpected type ${this.tokens[this.idx].type}`)
+            this.error(`Unexpected type ${this.tokens[this.idx].type}`)
         }
         return this.tokens[this.idx++]
     }
@@ -37,13 +42,13 @@ class Parser
     {
         if (!this.tokens[this.idx])
         {
-            throw new Error(`Unexpected EOF`)
+            this.error(`Unexpected EOF`)
 
         }
         if (label !== null && this.tokens[this.idx].label !== label)
         {
             // console.log("ERR", JSON.stringify(this.tokens.slice(this.idx)))
-            throw new Error(`Unexpected token ${this.tokens[this.idx].label}`)
+            this.error(`Unexpected token ${this.tokens[this.idx].label}`)
         }
         this.idx += 1
     }
@@ -52,13 +57,13 @@ class Parser
     {
         if (!this.tokens[this.idx])
         {
-            throw new Error(`Unexpected EOF`)
+            this.error(`Unexpected EOF`)
 
         }
         if (this.tokens[this.idx].type !== type)
         {
             // console.log("ERR", JSON.stringify(this.tokens.slice(this.idx)))
-            throw new Error(`Unexpected token ${this.tokens[this.idx].type}`)
+            this.error(`Unexpected token ${this.tokens[this.idx].type}`)
         }
         this.idx += 1
     }
@@ -297,7 +302,7 @@ class Parser
     parseUnary(op)
     {
         console.log(this.tokens.slice(this.idx))
-        if (!(["-", "!", "#"].includes(op.label))) throw new Error("Invalid unary operator");
+        if (!(["-", "!", "#"].includes(op.label))) this.error("Invalid unary operator");
         return {
             type: "UNARY",
             operator: op.label,
@@ -394,7 +399,7 @@ class Parser
             }
 
             // console.log(this.tokens.slice(this.idx))
-            throw new Error(`Unexpected token ${token.label}`)
+            this.error(`Unexpected token ${token.label}`)
         })
     }
 
