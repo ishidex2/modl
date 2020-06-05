@@ -119,6 +119,13 @@ class Runtime
                     this.callArgCount.push(this.prog[this.ip][1])
                     break;
 
+                case "CHKARGS":
+                    if (this.callArgCount[this.callArgCount.length-1] > this.prog[this.ip][1])
+                    {
+                        throw new Error("Passed too much arguments to a function");
+                    }
+                    break;
+
                 case "ENVPSH":
                     let e = new Env();
                     e.parent = this.env;
@@ -215,7 +222,7 @@ class Runtime
                     break;      
 
                 case "ADD":
-                    this.push(lr((l, r) => node.Node.newNumber(l.value + r.value)))
+                    this.push(lr((l, r) => typeof (l.value + r.value) == "string" ?  node.Node.newString(l.value + r.value) : node.Node.newNumber(l.value + r.value)))
                     break;
 
                 case "SUB":

@@ -109,10 +109,13 @@ class Node
     
     tget(k)
     {
-        if (this.type !== NodeType.TBL)
+        if (this.type !== NodeType.TBL && this.type !== NodeType.STR)
         {
             throw new Error("Attempt to get value '"+Node.dump(k)+"' from non-table of type "+Node.strType(this.type)+" with value of "+Node.dump(this))   
         }    
+
+        if (this.type === NodeType.STR) return this.value[k.value] ? Node.newString(this.value[k.value]) : Node.newNil() 
+
 
         return this.value[k.value] ? this.value[k.value] : Node.newNil() 
     }

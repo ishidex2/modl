@@ -27,6 +27,7 @@ class Decomposer
         this.rootProg = true
         this.discardEnv = false
         this.isCall = false
+        this.callCntArr = null
         this._decompose(prog)
         return this.res
     }
@@ -89,7 +90,9 @@ class Decomposer
             {
                 throw new Error("Invalid lvalue assignment")
             }
-            this.res.push(["CALLCNT", ast.args.length])
+
+            this.callCntArr = ["CALLCNT", ast.args.length]
+            this.res.push(this.callCntArr)
             for (let i = ast.args.length-1; i >= 0; i--)
             {   
                 this._decompose(ast.args[i])
@@ -182,6 +185,7 @@ class Decomposer
                 else if (ast.passSelf)
                 {
                     this._decompose(ast.left)
+                    this.callCntArr[1] += 1;
                 }
             }
             let remMod = this.idMode
@@ -218,6 +222,7 @@ class Decomposer
             this.res.push(jend)
             let fnstart = this.res.length
             this.res.push(["ENVPSH"])
+            this.res.push(["CHKARGS", ast.args.length])
             for (let i = 0; i < ast.args.length; i++)
             {
                 this.res.push(["STORE", ast.args[i].label])

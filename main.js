@@ -65,7 +65,7 @@ let t = parser.parse(tokens)
 // console.log(JSON.stringify(t));
 // console.log("\033[0;34m++++++ DECOMPOSER RESULT ++++++\033[0;32m");
 let code = decomposer.decompose(t);
-// console.log(Decomposer.fancy(code));
+console.log(Decomposer.fancy(code));
 // console.log("\033[0;34m++++++ RUN RESULT ++++++\033[0;32m");
 
 
@@ -81,7 +81,7 @@ runtime.rootEnv.setFunction("stdout", (runtime, env) => {
 })
 
 runtime.rootEnv.setFunction("newline", (runtime, env) => {
-    return node.newString("\n");
+    return node.Node.newString("\n");
 })
 
 
