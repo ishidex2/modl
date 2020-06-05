@@ -18,46 +18,8 @@ func Fruit::eat(self)
     stdout("Ate fruit "+self.fruit);
 };
 
-func Fruit::asdK(self){0};
-func Fruit::asdL(self){0};
-func Fruit::asdM(self){0};
-func Fruit::asdN(self){0};
-func Fruit::asdO(self){0};
-func Fruit::asdP(self){0};
-func Fruit::asdQ(self){0};
-func Fruit::asdR(self){0};
-func Fruit::asdS(self){0};
-func Fruit::asdT(self){0};
-func Fruit::asdA(self){0};
-func Fruit::asdB(self){0};
-func Fruit::asdC(self){0};
-func Fruit::asdD(self){0};
-func Fruit::asdE(self){0};
-func Fruit::asdF(self){0};
-func Fruit::asdG(self){0};
-func Fruit::asdH(self){0};
-func Fruit::asdI(self){0};
-func Fruit::asdJ(self){0};
-func Fruit::asdU(self){0};
-func Fruit::asdV(self){0};
-func Fruit::asdW(self){0};
-func Fruit::asdX(self){0};
-func Fruit::asdY(self){0};
-func Fruit::asdZ(self){0};
-func Fruit::B(self){0};
-func Fruit::J(self){0};
-func Fruit::q(self){0};
-func Fruit::r(self){0};
-func Fruit::s(self){0};
-func Fruit::t(self){0};
-
-func Fruit::nop(self)
-{0};
-
 apple = Fruit.new("apple");
 apple::eat();
 
 // Some stuff
-// t = 0; while t < 1000000: { tmp = Fruit.new("something"); tmp::nop(); t = t + 1 };
-
 stdout(if apple.fruit == "apple": "This is apple" else: "This is not apple")

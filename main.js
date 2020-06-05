@@ -116,4 +116,14 @@ console.log('Tokens count:', tokens.length);
 console.log('VM code size:', code.length);
 console.log('Debug timers:');
 debug.dumpTimers();
+
+console.log('--==  ENCODER  ==--')
+const Encoder = require('./encoder');
+let value = [125, false, null, true, [1, 2, 3], '｡ﾟ(TヮT)ﾟ｡', 2.5];
+let data = Encoder.encode(value);
+console.log('value :', value);
+console.log('encode :', data);
+for (let i = 0; i < data.byteLength; ++i)
+    console.log(`decode(${i}) :`, Encoder.decode(data, i));
+
 // console.log(JSON.stringify(debug.timers[0], null, '  '));
