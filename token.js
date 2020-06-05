@@ -1,8 +1,16 @@
 module.exports = class Token
 {
-  constructor(label, type)
-  {
-    this.label = label;
-    this.type = type;
-  }
+    error(msg)
+    {
+        throw new Error(`${msg}\n\tat line ${this.line+1}`);
+        
+    }
+
+    constructor(label, type, line = null, lineStr)
+    {
+        this.lineStr = lineStr;
+        this.line = line;
+        this.label = label;
+        this.type = type;
+    }
 }

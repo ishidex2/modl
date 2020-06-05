@@ -61,8 +61,8 @@ ruleset.add(/[a-zA-Z_]+/g, "IDENTIFIER");
 
 var tokens = lexer.lex(ruleset, fs.readFileSync("./test.modl").toString());
 
-// console.log("\033[0;34m++++++ LEXER RESULT ++++++\u001b[0m");
-// console.log(tokens);
+console.log("\033[0;34m++++++ LEXER RESULT ++++++\u001b[0m");
+console.log(tokens);
 
 // console.log("\033[0;34m++++++ PARSER RESULT ++++++\u001b[0m");
 let t = parser.parse(tokens)

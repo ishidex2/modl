@@ -18,12 +18,11 @@ let debug = require("./debug")
 
 class Decomposer
 {
-    
-
     decompose(prog)
     {
         debug.begin('decompose')
 
+        this.symbols = []
         this.res = []
         this.idMode = "GET"
         this.invalidateCall = false
