@@ -30,10 +30,6 @@ class Env
 
     setv(id, v)
     {
-        if (!this.entries[id] && this.parent)
-        {
-            this.parent.setv(id, v)
-        }
         this.entries[id] = v
         return v
     }
