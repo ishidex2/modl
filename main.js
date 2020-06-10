@@ -17,7 +17,7 @@ var ruleset = new LexerRuleset();
 let parser = new Parser();
 let runtime = new Runtime();
 
-ruleset.add(/[0-9]\.?[0-9]*/g, "NUMBER");
+ruleset.add(/[0-9]+\.?[0-9]*/g, "NUMBER");
 ruleset.add(/if/g, "KEYWORD");
 ruleset.add(/else/g, "KEYWORD");
 ruleset.add(/while/g, "KEYWORD");
