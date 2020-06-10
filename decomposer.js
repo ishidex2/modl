@@ -130,7 +130,7 @@ class Decomposer
         this.emitInstruction(Decomposer.instruction.JMP);
         let pushSkipLabel = this.createLabel();
         let backLabel = this.createLabel();
-        this.emitInstruction(Decomposer.instruction.MOVE, {source: 1, dest: 0})
+        this.emitInstruction(Decomposer.instruction.MOV, {source: 1, dest: 0})
         this.emitInstruction(Decomposer.instruction.TBLPUSH, {table: 0, value: 1});
         this.emitInstruction(Decomposer.instruction.PUSH, {register: 0});
 
