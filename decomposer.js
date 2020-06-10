@@ -161,10 +161,13 @@ class Decomposer
 
         this.decompose(ast.left);
 
+        this.emitInstruction(Decomposer.instruction.PUSH, {register: 0});
         
         if (!ast.pushv)
-            this.emitString(ast.selector, 1);
+            this.decompose(ast.selector, 0); // Decomposer output is in register zero, a quick hack it is. TODO make dynamic register for each emitter
+        this.emitInstruction(Decomposer.instruction.MOV, {source: 0, dest: 1});
 
+        this.emitInstruction(Decomposer.instruction.POP, {register: 0});
         this.emitInstruction(Decomposer.instruction.POP, {register: 2});
 
         if (store && !ast.pushv)
@@ -340,7 +343,7 @@ class Decomposer
         switch (instr)
         {
             case Decomposer.instruction.LOADC:
-                dbgstr += (`LOADC R${params.register} ${params.data}`);
+                dbgstr += (`LOADC R${params.register} ${typeof params.data == "string" ? "\""+params.data+"\"" : params.data}`);
                 res.push(params.register);
                 res.push(this.encode(params.data));
                 break;
