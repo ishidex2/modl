@@ -381,6 +381,11 @@ class Parser
                 return token
             }
 
+            if (token.type == "NIL")
+            {
+                return token
+            }
+
 
             if (token.type == "IDENTIFIER")
             {
