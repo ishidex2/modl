@@ -48,7 +48,7 @@ class Parser
         if (label !== null && this.tokens[this.idx].label !== label)
         {
             // console.log("ERR", JSON.stringify(this.tokens.slice(this.idx)))
-            this.error(`Unexpected token ${this.tokens[this.idx].label}`)
+            this.error(`Unexpected token ${this.tokens[this.idx].label}; label: '${label}'`)
         }
         this.idx += 1
     }
@@ -412,7 +412,7 @@ class Parser
     {
         this.callCnt += 1;
 
-        return this.maybeAccess(() => this.parseBinary(this.parseAtomic(), 0))
+        return this.maybeAccess(() => this.parseBinary(this.parseAtomic(), -1))
     }
 
     parseBinary(left, priority)
