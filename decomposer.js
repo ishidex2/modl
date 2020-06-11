@@ -76,15 +76,24 @@ class Decomposer
 
     emitTable(ast)
     {
+        Debug.event("AST",ast)
+        this.emitInstruction(Decomposer.instruction.LOADC, {register: 0, data: []})
 
-        this.emitInstruction(Decomposer.instruction.LOADC, {register: 2, data: []})
+
         ast.tbl.forEach(e => {
             this.decompose(e.key, 1);
-            this.decompose(e.value);
-            this.emitInstruction(Decomposer.instruction.TBLSETR, {table: 2, name: 1, value: 0});
-        })
 
-        this.emitInstruction(Decomposer.instruction.MOV, {source: 2, dest: 0});
+            this.emitInstruction(Decomposer.instruction.PUSH, {register: 0});
+            this.emitInstruction(Decomposer.instruction.PUSH, {register: 1});
+            this.decompose(e.value);
+
+            this.emitInstruction(Decomposer.instruction.MOV, {source: 0, dest: 2});
+
+            this.emitInstruction(Decomposer.instruction.POP, {register: 1});
+            this.emitInstruction(Decomposer.instruction.POP, {register: 0});
+            this.emitInstruction(Decomposer.instruction.TBLSETR, {table: 0, name: 1, value: 2});
+        });
+
     }
 
     emitCall(ast)
@@ -259,21 +268,38 @@ class Decomposer
             }
         }
     }
-    
+
+   
     emitBinary(ast, depth = 0)
     {
+        let skipSwitch = false;
+        let skipLabel;
         let canUseExtraRegisters = depth < 5;
         depth = depth < 5 ? depth : 5;
-
+        
         this.emitDeepBranch(ast.left, depth);
-        this.emitDeepBranch(ast.right, depth+1);
+        if (ast.operator == "&&")
+        {
+            skipSwitch = true;
+            this.emitInstruction(Decomposer.instruction.JCF, {register: depth})
+            skipLabel = this.createLabel();
+        }
+
+
+        this.emitDeepBranch(ast.right, depth+(!skipSwitch));
+
+        // Resolve skip label, For operations like && which only run second check, if previous was valid
+        if (skipLabel)
+        {
+            this.resolveLabel(skipLabel);
+        }
  
         if (!canUseExtraRegisters)
         {
             this.emitInstruction(Decomposer.instruction.POP, {register: depth+1})
             this.emitInstruction(Decomposer.instruction.POP, {register: depth})
         }
-
+        if (!skipSwitch)
         switch (ast.operator)
         {
             case "+":
@@ -291,12 +317,29 @@ class Decomposer
             case "==":
                 this.emitInstruction(Decomposer.instruction.CMPEQ, {rl: depth+0, rr: depth+1})
                 break;
+            case "!=":
+                this.emitInstruction(Decomposer.instruction.CMPNEQ, {rl: depth+0, rr: depth+1})
+                break;
             case ">":
                 this.emitInstruction(Decomposer.instruction.CMPGT, {rl: depth+0, rr: depth+1})
                 break;
             case "<":
                 this.emitInstruction(Decomposer.instruction.CMPLT, {rl: depth+0, rr: depth+1})
                 break;
+            case ">=":
+                this.emitInstruction(Decomposer.instruction.CMPGE, {rl: depth+0, rr: depth+1})
+                break;
+            case "<=":
+                this.emitInstruction(Decomposer.instruction.CMPLE, {rl: depth+0, rr: depth+1})
+                break;
+            case "||":
+            case "|":
+                this.emitInstruction(Decomposer.instruction.OR, {rl: depth+0, rr: depth+1})
+                break;
+            case "^":
+                this.emitInstruction(Decomposer.instruction.XOR, {rl: depth+0, rr: depth+1})
+                break;
+
 
 
 
@@ -343,7 +386,7 @@ class Decomposer
         switch (instr)
         {
             case Decomposer.instruction.LOADC:
-                dbgstr += (`LOADC R${params.register} ${typeof params.data == "string" ? "\""+params.data+"\"" : params.data}`);
+                dbgstr += (`LOADC R${params.register} ${JSON.stringify(params.data)}`);
                 res.push(params.register);
                 res.push(this.encode(params.data));
                 break;
@@ -377,6 +420,14 @@ class Decomposer
                 dbgstr += (`DIV R${params.rl} R${params.rr}`);
                 res.push((params.rl << 4) | (params.rr & 0x0F))
                 break;
+            case Decomposer.instruction.OR:
+                dbgstr += (`OR R${params.rl} R${params.rr}`);
+                res.push((params.rl << 4) | (params.rr & 0x0F))
+                break;
+            case Decomposer.instruction.XOR:
+                dbgstr += (`XOR R${params.rl} R${params.rr}`);
+                res.push((params.rl << 4) | (params.rr & 0x0F))
+                break;
             case Decomposer.instruction.POP:
                 dbgstr += (`POP R${params.register}`);
                 res.push(params.register)
@@ -397,12 +448,24 @@ class Decomposer
                 dbgstr += (`CMPEQ R${params.rl} R${params.rr}`);
                 res.push((params.rl << 4) | (params.rr & 0x0F))
                 break;
+            case Decomposer.instruction.CMPNEQ:
+                dbgstr += (`CMPNEQ R${params.rl} R${params.rr}`);
+                res.push((params.rl << 4) | (params.rr & 0x0F))
+                break;
+            case Decomposer.instruction.CMPGE:
+                dbgstr += (`CMPGE R${params.rl} R${params.rr}`);
+                res.push((params.rl << 4) | (params.rr & 0x0F))
+                break;
+            case Decomposer.instruction.CMPLE:
+                dbgstr += (`CMPLE R${params.rl} R${params.rr}`);
+                res.push((params.rl << 4) | (params.rr & 0x0F))
+                break;
             case Decomposer.instruction.CMPGT:
-                dbgstr += (`CMPEQ R${params.rl} R${params.rr}`);
+                dbgstr += (`CMPGT R${params.rl} R${params.rr}`);
                 res.push((params.rl << 4) | (params.rr & 0x0F))
                 break;
             case Decomposer.instruction.CMPLT:
-                dbgstr += (`CMPEQ R${params.rl} R${params.rr}`);
+                dbgstr += (`CMPLT R${params.rl} R${params.rr}`);
                 res.push((params.rl << 4) | (params.rr & 0x0F))
                 break;
             case Decomposer.instruction.JCF: 
@@ -527,10 +590,15 @@ Decomposer.instruction = {
     SUB: 0x11,
     MUL: 0x12,
     DIV: 0x13,
+    OR: 0x16,
+    XOR: 0x17,
     JMP: 0x1F,
     CMPEQ: 0x20,
+    CMPNEQ: 0x21,
     CMPLT: 0x22,
     CMPGT: 0x24,
+    CMPLE: 0x26,
+    CMPGE: 0x28,
     JCF: 0x30,
     JCT: 0x31,
     POP: 0x40,
