@@ -17,6 +17,8 @@ var ruleset = new LexerRuleset();
 let parser = new Parser();
 let runtime = new Runtime();
 
+ruleset.add(/0x[0-9a-fA-F]+/g, "NUMBER");
+ruleset.add(/0b[0-1]+/g, "NUMBER");
 ruleset.add(/[0-9]+\.?[0-9]*/g, "NUMBER");
 ruleset.add(/if/g, "KEYWORD");
 ruleset.add(/else/g, "KEYWORD");
@@ -28,23 +30,33 @@ ruleset.add(/false/g, "BOOL");
 ruleset.add(/\/\//g, "COMMENT");
 ruleset.add(/\/\*/g, "COMMENTO");
 ruleset.add(/\*\//g, "COMMENTC");
-ruleset.add(/\&\&/g, "OPERATOR");
-ruleset.add(/\|\|/g, "OPERATOR");
-ruleset.add(/\|/g, "OPERATOR");
+
 ruleset.add(/\=\=/g, "OPERATOR");
-ruleset.add(/\=/g, "OPERATOR");
 ruleset.add(/\!\=/g, "OPERATOR");
+ruleset.add(/\!/g, "OPERATOR");
+ruleset.add(/\=/g, "OPERATOR");
+ruleset.add(/\|\|/g, "OPERATOR");
+ruleset.add(/\&\&/g, "OPERATOR");
+ruleset.add(/\|/g, "OPERATOR");
+ruleset.add(/\^/g, "OPERATOR");
+ruleset.add(/\&/g, "OPERATOR");
+ruleset.add(/\<\</g, "OPERATOR");
+ruleset.add(/\>\>/g, "OPERATOR");
 ruleset.add(/\<\=/g, "OPERATOR");
 ruleset.add(/\>\=/g, "OPERATOR");
 ruleset.add(/\</g, "OPERATOR");
 ruleset.add(/\>/g, "OPERATOR");
 ruleset.add(/\+/g, "OPERATOR");
-ruleset.add(/\~/g, "OPERATOR");
-ruleset.add(/\^/g, "OPERATOR");
 ruleset.add(/\-/g, "OPERATOR");
 ruleset.add(/\*/g, "OPERATOR");
-ruleset.add(/\#/g, "OPERATOR");
+ruleset.add(/\~\//g, "OPERATOR");
 ruleset.add(/\//g, "OPERATOR");
+ruleset.add(/\%/g, "OPERATOR");
+ruleset.add(/yield/g, "OPERATOR"); // Unary
+ruleset.add(/return/g, "OPERATOR");
+
+ruleset.add(/\~/g, "OPERATOR");
+ruleset.add(/\#/g, "OPERATOR");
 ruleset.add(/\:\:/g, "ACCESS");
 ruleset.add(/\./g, "ACCESS");
 ruleset.add(/\=\>/g, "THUS");
@@ -70,7 +82,7 @@ console.log(tokens);
 
 console.log("\033[0;34m++++++ PARSER RESULT ++++++\u001b[0m");
 let t = parser.parse(tokens);
-console.log(t);
+console.log(JSON.stringify(t));
 
 console.log("\033[0;34m++++++ DECOMPOSER RESULT ++++++\u001b[0m");
 let code = decomposer.start(t);
@@ -81,4 +93,11 @@ for (let i = 0; i < code.length; i++)
 }
 console.log(r);
 
+fs.appendFile("./out.modbc", Buffer.from(code), function (err) {
+    if (err) {
+      throw(err);
+    } else {
+      return(code.length);
+    }
+});
 

@@ -114,7 +114,8 @@ module.exports = class Lexer
             }
             if (!found)
             {
-                console.error(`Illegal character  ' ${source[pos]} ' at ${pos}`);
+                console.error(source.slice(pos));
+                throw new Error(`Illegal character  ' ${source[pos]} ' at ${line}`);
                 process.exit(-1);
             }
         }
