@@ -53,7 +53,7 @@ Transaction = [from: nil, to: nil, amount: nil];
 func Transaction::new(from, to, amount)
 {
     r = [
-        from: from,
+        from: height,
         to: to,
         amount: amount
     ];
@@ -74,8 +74,6 @@ func Block::new(height, transactions)
     r.__index = self;
     
     r.hash = r::calculateHash()
-    
-    r
 };
 
 func Block::calculateHash()
@@ -88,7 +86,6 @@ func Block::calculateHash()
         strToHash = strToHash + toString(self.transactions[i].amount);
         strToHash = strToHash + self.transactions[i].from;
         strToHash = strToHash + self.transactions[i].to;
-        i = i + 1;
     };
     badHash(strToHash)
 };
@@ -106,7 +103,7 @@ func BlockChain::new()
 func BlockChain::createGenesisBlock()
 {
     // Ideally we would need RSA here
-    self.blocks[] = Block::new(0, [Transaction::new("system", "system", 10000)])
+    self.blocks[] = Block::new(0, Transaction::new("system", "system", 10000))
 };
 
 func BlockChain::createTransaction(transaction)
@@ -128,17 +125,13 @@ func BlockChain::getBalance(user)
         j = 0;
         while j < #self.blocks[i].transactions:
         {
-            if self.blocks[i].transactions.from == user && i > 0:
+            if #self.blocks[i].transactions.from == user:
                 balance = balance - #self.blocks[i].transactions.amount;
             
-            if self.blocks[i].transactions.to == user:
-                balance = balance + #self.blocks[i].transactions.amount;
-            j = j + 1;
-        };
-        i = i + 1;
-    };
-
-    balance
+            if #self.blocks[i].transactions.to == user:
+                balance = balance - #self.blocks[i].transactions.amount;
+        }
+    }
 };
 
 func BlockChain::isChainValid()
@@ -155,5 +148,14 @@ func BlockChain::isChainValid()
     return true;
 };
 
-b = BlockChain::new();
-b::getBalance("system")
+
+
+print(badHash("something"));
+print(badHash("comething"));
+print(badHash("scmething"));
+print(badHash("socething"));
+print(badHash("somcthing"));
+print(badHash("someching"));
+print(badHash("sometcing"));
+print(badHash("somethcng"));
+print(badHash("somethicg"));

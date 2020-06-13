@@ -47,7 +47,7 @@ class Parser
         }
         if (label !== null && this.tokens[this.idx].label !== label)
         {
-            // console.log("ERR", JSON.stringify(this.tokens.slice(this.idx)))
+            console.log("ERR", JSON.stringify(this.tokens.slice(this.idx)))
             this.error(`Unexpected token ${this.tokens[this.idx].label}; label: '${label}'`)
         }
         this.idx += 1
@@ -62,7 +62,7 @@ class Parser
         }
         if (this.tokens[this.idx].type !== type)
         {
-            // console.log("ERR", JSON.stringify(this.tokens.slice(this.idx)))
+            console.log("ERR", JSON.stringify(this.tokens.slice(this.idx)))
             this.error(`Unexpected token ${this.tokens[this.idx].type}`)
         }
         this.idx += 1
@@ -134,6 +134,8 @@ class Parser
                 pushv = true
             }
             else accessor = this.parseExpression()
+
+            console.log("A", accessor);
             this.skip("]")
 
             return this.maybeAccess(() => {return {
@@ -301,8 +303,8 @@ class Parser
 
     parseUnary(op)
     {
-        console.log(this.tokens.slice(this.idx))
-        if (!(["-", "!", "#"].includes(op.label))) this.error("Invalid unary operator");
+        console.log(op)
+        if (!(["-", "!", "#", "~", "yield", "return"].includes(op.label))) this.error("Invalid unary operator");
         return {
             type: "UNARY",
             operator: op.label,
@@ -412,7 +414,7 @@ class Parser
     {
         this.callCnt += 1;
 
-        return this.maybeAccess(() => this.parseBinary(this.parseAtomic(), -1))
+        return this.maybeAccess(() => this.parseBinary(this.parseAtomic(), 0))
     }
 
     parseBinary(left, priority)
@@ -441,21 +443,30 @@ class Parser
 }
 
 Parser.priority = {
-    '=': 0,
-    '^': 1,
-    '|': 2,
-    '||': 3,
-    '&&': 4,
-    '<': 10,
-    '>': 10,
-    '<=': 10,
-    '>=': 10,
+    '=': 1,
+    '||': 4,
+    '&&': 5,
+    '|': 6,
+    '^': 7,
+    '&': 8,
+    
     '==': 10,
     '!=': 10,
+
+    '<': 13,
+    '>': 13,
+    '<=': 13,
+    '>=': 13,
+    
+    '<<': 15,
+    '>>': 15,
+
     '+': 20,
     '-': 20,
     '*': 30,
-    '/': 30
+    '~/': 30,
+    '/': 30,
+    '%': 30,
 }
 
 module.exports = Parser
