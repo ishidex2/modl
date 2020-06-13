@@ -73,7 +73,7 @@ ruleset.add(/\n/g, "NEWLINE");
 ruleset.add(/\s/g, "NOTHING");
 ruleset.add(/\".*?\"/g, "STRING");
 ruleset.add(/\'.*?\'/g, "STRING");
-ruleset.add(/[a-zA-Z_]+/g, "IDENTIFIER");
+ruleset.add(/[a-zA-Z_][a-zA-Z_0-9]*/g, "IDENTIFIER");
 
 var tokens = lexer.lex(ruleset, fs.readFileSync("./test.modl").toString());
 
@@ -93,7 +93,7 @@ for (let i = 0; i < code.length; i++)
 }
 console.log(r);
 
-fs.appendFile("./out.modbc", Buffer.from(code), function (err) {
+fs.writeFileSync("./out.modbc", Buffer.from(code), function (err) {
     if (err) {
       throw(err);
     } else {

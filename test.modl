@@ -128,16 +128,16 @@ func BlockChain::getBalance(user)
         j = 0;
         while j < #self.blocks[i].transactions:
         {
-            if self.blocks[i].transactions.from == user && i > 0:
-                balance = balance - #self.blocks[i].transactions.amount;
+            if self.blocks[i].transactions[j].from == user && i > 0:
+                balance = balance - self.blocks[i].transactions[j].amount;
             
-            if self.blocks[i].transactions.to == user:
-                balance = balance + #self.blocks[i].transactions.amount;
+            if self.blocks[i].transactions[j].to == user:
+                balance = balance + self.blocks[i].transactions[j].amount;
             j = j + 1;
         };
         i = i + 1;
     };
-
+    print("Balance of user "+user+" is "+toString(balance));
     balance
 };
 
@@ -148,12 +148,15 @@ func BlockChain::isChainValid()
     {
         if self.blocks[i].previousHash != self.blocks[i-1].hash:
         {
+            print("Chain is invalid");
             return false;
         };
         i = i + 1;
     };
+    print("Chain is valid");
     return true;
 };
 
 b = BlockChain::new();
-b::getBalance("system")
+b::getBalance("system");
+b::isChainValid();
